@@ -134,7 +134,6 @@ def crimeVtemp_plot(cur, conn):
     plt.title("Number of Violent Crimes versus Temperature")
     plt.tight_layout()
     plt.show()
-    #doesn't show homicides
 
 def crimeVprecip_plot(cur, conn):
     cur.execute("""SELECT Crime.assaults, Crime.homicides, Precipitation.precipitation_inches
@@ -161,7 +160,6 @@ def crimeVprecip_plot(cur, conn):
     plt.title("Number of Violent Crimes versus Precipitation")
     plt.tight_layout()
     plt.show()
-    #doesn't show assaults
 
 def crimesPerDayPlot(cur, conn):
     cur.execute("""SELECT date, SUM(assaults), SUM(homicides)
@@ -179,7 +177,6 @@ def crimesPerDayPlot(cur, conn):
     plt.ylabel('Number of Violent Crimes Reported')
     plt.title('Number of Violent Crimes Reported Daily in March 2021')
     plt.show()
-    #labels are fucked up on the bottom
 
 def FindAverages(cur, conn):
     cur.execute('SELECT assaults FROM Crime')
