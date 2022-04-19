@@ -208,21 +208,6 @@ def FindAverages(cur, conn):
     avg_temp = sum_temp/31
     return [avg_assaults, avg_homicides, avg_precip, avg_temp]
 
-# def plotAverages(cur, conn):
-#     avgs = FindAverages(cur, conn)
-#     print(avgs)
-#     fig = plt.figure()
-#     x = [0, 1, 2, 3]
-#     plt.bar(x,avgs)
-#     plt.title('Monthly Averages for March 2021')
-#     # plt.xlabel()
-#     plt.tight_layout()
-#     plt.show()
-
-
-   
-
-    #prints out a giant rectangle on plot
 
 def writeFile(filename, cur, conn):
     l = FindAverages(cur, conn)
