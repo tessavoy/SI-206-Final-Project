@@ -234,7 +234,6 @@ def main():
         crimeVprecip_plot(cur,conn)
         crimesPerDayPlot(cur, conn)
         FindAverages(cur, conn)
-        # plotAverages(cur, conn)
         writeFile('FinalProject.txt', cur, conn)
 
 
