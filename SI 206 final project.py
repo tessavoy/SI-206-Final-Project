@@ -159,22 +159,22 @@ def crimeVprecip_plot(cur, conn):
     plt.tight_layout()
     plt.show()
 
-def crimesPerDayPlot(cur, conn): #group by month
-    cur.execute("""SELECT date, SUM(assaults), SUM(homicides)
-    FROM Crime
-    GROUP BY date
-    """)
-    data = cur.fetchall()
-    dates = []
-    num_crimes = []
-    for i in data:
-        dates.append(i[0][8:])
-        num_crimes.append(i[1])
-    plt.bar(dates, num_crimes, color='purple', width=.3)
-    plt.xlabel('Date')
-    plt.ylabel('Number of Violent Crimes Reported')
-    plt.title('Number of Violent Crimes Reported Daily in March 2021')
-    plt.show()
+# def crimesPerDayPlot(cur, conn): #group by month
+#     cur.execute("""SELECT date, SUM(assaults), SUM(homicides)
+#     FROM Crime
+#     GROUP BY date
+#     """)
+#     data = cur.fetchall()
+#     dates = []
+#     num_crimes = []
+#     for i in data:
+#         dates.append(i[0][8:])
+#         num_crimes.append(i[1])
+#     plt.bar(dates, num_crimes, color='purple', width=.3)
+#     plt.xlabel('Date')
+#     plt.ylabel('Number of Violent Crimes Reported')
+#     plt.title('Number of Violent Crimes Reported Daily in March 2021')
+#     plt.show()
 
 def FindAverages(cur, conn):
     cur.execute("""SELECT AVG(assaults), AVG(homicides), AVG(temperature), AVG(precipitation_inches)
@@ -182,37 +182,48 @@ def FindAverages(cur, conn):
     JOIN Precipitation ON Crime.date = Precipitation.date
     WHERE Crime.date >= '2021-03-01' AND Crime.date <= '2021-03-31'""")
     march_avg_data = cur.fetchall()
-    print(march_avg_data)
     cur.execute("""SELECT AVG(assaults), AVG(homicides), AVG(temperature), AVG(precipitation_inches)
     FROM Crime JOIN Temperature ON Crime.date = Temperature.date
     JOIN Precipitation ON Crime.date = Precipitation.date
     WHERE Crime.date >= '2021-04-01' AND Crime.date <= '2021-04-30'""")
     april_avg_data = cur.fetchall()
-    print(april_avg_data)
     cur.execute("""SELECT AVG(assaults), AVG(homicides), AVG(temperature), AVG(precipitation_inches)
     FROM Crime JOIN Temperature ON Crime.date = Temperature.date
     JOIN Precipitation ON Crime.date = Precipitation.date
     WHERE Crime.date >= '2021-05-01' AND Crime.date <= '2021-05-31'""")
     may_avg_data = cur.fetchall()
-    print(may_avg_data)
     cur.execute("""SELECT AVG(assaults), AVG(homicides), AVG(temperature), AVG(precipitation_inches)
     FROM Crime JOIN Temperature ON Crime.date = Temperature.date
     JOIN Precipitation ON Crime.date = Precipitation.date
     WHERE Crime.date >= '2021-06-01' AND Crime.date <= '2021-06-30'""")
     june_avg_data = cur.fetchall()
-    print(june_avg_data)
-    
-    
+    d = {}
+    d['March'] = march_avg_data
+    d['April'] = april_avg_data
+    d['May'] = may_avg_data
+    d['June'] = june_avg_data
+    return d
 
 
-
-def writeFile(filename, cur, conn): #update this
-    l = FindAverages(cur, conn)
+def writeFile(filename, cur, conn):
+    d = FindAverages(cur, conn)
     f = open(filename, 'w')
-    f.write(f"Average Number of Reported Assaults in Washington D.C. During March 2021: {l[0]}")
-    f.write(f"Average Number of Reported Homicides in Washington D.C. During March 2021: {l[1]}")
-    f.write(f"Average Amount of Precipitation (in) in Washington D.C. During March 2021: {l[2]}")
-    f.write(f"Average Temperature in Washington D.C. During March 2021: {l[3]}")
+    f.write(f"Average Number of Reported Assaults in Washington D.C. During March 2021: {d['March'][0][0]}\n")
+    f.write(f"Average Number of Reported Homicides in Washington D.C. During March 2021: {d['March'][0][1]}\n")
+    f.write(f"Average Amount of Precipitation (in) in Washington D.C. During March 2021: {d['March'][0][2]}\n")
+    f.write(f"Average Temperature in Washington D.C. During March 2021: {d['March'][0][3]}\n")
+    f.write(f"Average Number of Reported Assaults in Washington D.C. During April 2021: {d['April'][0][0]}\n")
+    f.write(f"Average Number of Reported Homicides in Washington D.C. During April 2021: {d['April'][0][1]}\n")
+    f.write(f"Average Amount of Precipitation (in) in Washington D.C. During April 2021: {d['April'][0][2]}\n")
+    f.write(f"Average Temperature in Washington D.C. During April 2021: {d['April'][0][3]}\n")
+    f.write(f"Average Number of Reported Assaults in Washington D.C. During May 2021: {d['May'][0][0]}\n")
+    f.write(f"Average Number of Reported Homicides in Washington D.C. During May 2021: {d['May'][0][1]}\n")
+    f.write(f"Average Amount of Precipitation (in) in Washington D.C. During May 2021: {d['May'][0][2]}\n")
+    f.write(f"Average Temperature in Washington D.C. During May 2021: {d['May'][0][3]}\n")
+    f.write(f"Average Number of Reported Assaults in Washington D.C. During June 2021: {d['June'][0][0]}\n")
+    f.write(f"Average Number of Reported Homicides in Washington D.C. During June 2021: {d['June'][0][1]}\n")
+    f.write(f"Average Amount of Precipitation (in) in Washington D.C. During June 2021: {d['June'][0][2]}\n")
+    f.write(f"Average Temperature in Washington D.C. During June 2021: {d['June'][0][3]}\n")
     f.close()
 
 
@@ -231,7 +242,7 @@ def main():
         # crimeVprecip_plot(cur,conn)
         # crimesPerDayPlot(cur, conn)
         FindAverages(cur, conn)
-        # writeFile('FinalProject.txt', cur, conn)
+        writeFile('FinalProject.txt', cur, conn)
 
 
 main()
