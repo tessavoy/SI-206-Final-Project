@@ -176,32 +176,34 @@ def crimesPerDayPlot(cur, conn): #group by month
     plt.title('Number of Violent Crimes Reported Daily in March 2021')
     plt.show()
 
-def FindAverages(cur, conn): #update this
-    cur.execute('SELECT assaults FROM Crime')
-    assault_data = cur.fetchall()
-    sum_assaults = 0
-    for item in assault_data:
-        sum_assaults += int(item[0])
-    avg_assaults = sum_assaults/31
-    cur.execute('SELECT homicides FROM Crime')
-    homicide_data = cur.fetchall()
-    sum_homicides = 0
-    for item in homicide_data:
-        sum_homicides += int(item[0])
-    avg_homicides = sum_homicides/31
-    cur.execute('SELECT precipitation_inches FROM Precipitation')
-    precip_data = cur.fetchall()
-    sum_precip = 0
-    for item in precip_data:
-        sum_precip += int(item[0])
-    avg_precip = sum_precip/31
-    cur.execute('SELECT temperature FROM Temperature')
-    temp_data = cur.fetchall()
-    sum_temp = 0
-    for item in temp_data:
-        sum_temp += int(item[0])
-    avg_temp = sum_temp/31
-    return [avg_assaults, avg_homicides, avg_precip, avg_temp]
+def FindAverages(cur, conn):
+    cur.execute("""SELECT AVG(assaults), AVG(homicides), AVG(temperature), AVG(precipitation_inches)
+    FROM Crime JOIN Temperature ON Crime.date = Temperature.date
+    JOIN Precipitation ON Crime.date = Precipitation.date
+    WHERE Crime.date >= '2021-03-01' AND Crime.date <= '2021-03-31'""")
+    march_avg_data = cur.fetchall()
+    print(march_avg_data)
+    cur.execute("""SELECT AVG(assaults), AVG(homicides), AVG(temperature), AVG(precipitation_inches)
+    FROM Crime JOIN Temperature ON Crime.date = Temperature.date
+    JOIN Precipitation ON Crime.date = Precipitation.date
+    WHERE Crime.date >= '2021-04-01' AND Crime.date <= '2021-04-30'""")
+    april_avg_data = cur.fetchall()
+    print(april_avg_data)
+    cur.execute("""SELECT AVG(assaults), AVG(homicides), AVG(temperature), AVG(precipitation_inches)
+    FROM Crime JOIN Temperature ON Crime.date = Temperature.date
+    JOIN Precipitation ON Crime.date = Precipitation.date
+    WHERE Crime.date >= '2021-05-01' AND Crime.date <= '2021-05-31'""")
+    may_avg_data = cur.fetchall()
+    print(may_avg_data)
+    cur.execute("""SELECT AVG(assaults), AVG(homicides), AVG(temperature), AVG(precipitation_inches)
+    FROM Crime JOIN Temperature ON Crime.date = Temperature.date
+    JOIN Precipitation ON Crime.date = Precipitation.date
+    WHERE Crime.date >= '2021-06-01' AND Crime.date <= '2021-06-30'""")
+    june_avg_data = cur.fetchall()
+    print(june_avg_data)
+    
+    
+
 
 
 def writeFile(filename, cur, conn): #update this
@@ -222,13 +224,13 @@ def main():
         # temp_json = weather_api_call()
         # precip_json = rain_api_call()
         cur, conn = setUpDatabase('FinalProject.db')
-        setUpCrimeTable(data, cur, conn)
+        # setUpCrimeTable(data, cur, conn)
         # setUpTemperatureTable(temp_json, cur, conn)
         # setUpPrecipTable(precip_json, cur, conn)
-        crimeVtemp_plot(cur, conn)
-        crimeVprecip_plot(cur,conn)
+        # crimeVtemp_plot(cur, conn)
+        # crimeVprecip_plot(cur,conn)
         # crimesPerDayPlot(cur, conn)
-        # FindAverages(cur, conn)
+        FindAverages(cur, conn)
         # writeFile('FinalProject.txt', cur, conn)
 
 
