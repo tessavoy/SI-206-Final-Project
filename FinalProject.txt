@@ -1,0 +1,16 @@
+Average Number of Reported Assaults in Washington D.C. During March 2021: 1.8076923076923077
+Average Number of Reported Homicides in Washington D.C. During March 2021: 0.38461538461538464
+Average Amount of Precipitation (in) in Washington D.C. During March 2021: 49.353846153846156
+Average Temperature in Washington D.C. During March 2021: 0.12192307692307693
+Average Number of Reported Assaults in Washington D.C. During April 2021: 2.2333333333333334
+Average Number of Reported Homicides in Washington D.C. During April 2021: 0.5666666666666667
+Average Amount of Precipitation (in) in Washington D.C. During April 2021: 57.84999999999999
+Average Temperature in Washington D.C. During April 2021: 0.07200000000000001
+Average Number of Reported Assaults in Washington D.C. During May 2021: 2.9655172413793105
+Average Number of Reported Homicides in Washington D.C. During May 2021: 0.3448275862068966
+Average Amount of Precipitation (in) in Washington D.C. During May 2021: 65.45172413793104
+Average Temperature in Washington D.C. During May 2021: 0.09137931034482759
+Average Number of Reported Assaults in Washington D.C. During June 2021: 2.9642857142857144
+Average Number of Reported Homicides in Washington D.C. During June 2021: 0.17857142857142858
+Average Amount of Precipitation (in) in Washington D.C. During June 2021: 75.95714285714287
+Average Temperature in Washington D.C. During June 2021: 0.14785714285714288
