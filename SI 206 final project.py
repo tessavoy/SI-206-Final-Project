@@ -7,15 +7,16 @@ from datetime import datetime
 import numpy as np
 
 
+
 def crime_api_call():
-    result = requests.get("https://maps2.dcgis.dc.gov/dcgis/rest/services/FEEDS/MPD/MapServer/3/query?where=OFFENSE%20%3D%20'HOMICIDE'%20OR%20OFFENSE%20%3D%20'ASSAULT%20W%2FDANGEROUS%20WEAPON'&outFields=REPORT_DAT,OFFENSE&outSR=4326&f=json")
+    result = requests.get("https://maps2.dcgis.dc.gov/dcgis/rest/services/FEEDS/MPD/MapServer/3/query?where=OFFENSE%20%3D%20'ASSAULT%20W%2FDANGEROUS%20WEAPON'%20OR%20OFFENSE%20%3D%20'HOMICIDE'&outFields=REPORT_DAT,OFFENSE&outSR=4326&f=json")
     response = result.json()
     return response
 
 def get_crime_date_and_type(response):
     list_of_dic = []
     for item in response['features']:
-            if 1614564000000 < item['attributes']['REPORT_DAT'] < 1617156000000:
+            if 1614564000000 < item['attributes']['REPORT_DAT'] < 1625014800000:
                     unix = (item['attributes']['REPORT_DAT'])/1000
                     d = datetime.fromtimestamp(unix)
                     date = d.strftime('%Y-%m-%d')
@@ -46,14 +47,14 @@ def crime_org(list_of_dic):
     return crimes_per_date
 
 def weather_api_call():
-    base_url = 'https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/DC/2021-03-01/2021-03-31?unitGroup=us&elements=datetime%2Ctemp&include=days&key=5HAZYFM2MFCZ3DJWFDJKW55P3&contentType=json'
+    base_url = 'https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/DC/2021-03-01/2021-06-30?unitGroup=us&elements=datetime%2Ctemp&include=days&key=JRBRCLM73L4BL92D2EAWXAY5M&contentType=json'
     result = requests.get(base_url)
     response = result.json()
     weather_temp_json = json.dumps(response, indent = 4)
     return response
 
 def rain_api_call():
-    base_url = 'https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/DC/2021-03-01/2021-03-31?unitGroup=us&elements=datetime%2Cprecip&include=days&key=5HAZYFM2MFCZ3DJWFDJKW55P3&contentType=json'
+    base_url = 'https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/DC/2021-03-01/2021-06-30?unitGroup=us&elements=datetime%2Cprecip&include=days&key=JRBRCLM73L4BL92D2EAWXAY5M&contentType=json'
     result = requests.get(base_url)
     response = result.json()
     rain_json = json.dumps(response, indent = 4)
@@ -66,7 +67,6 @@ def setUpDatabase(db_name):
     return cur, conn
 
 def setUpCrimeTable(data, cur, conn):
-    cur.execute("DROP TABLE IF EXISTS Crime")
     cur.execute("""CREATE TABLE IF NOT EXISTS Crime(
         date TEXT UNIQUE PRIMARY KEY,
         assaults TEXT,
@@ -82,7 +82,6 @@ def setUpCrimeTable(data, cur, conn):
         conn.commit()
 
 def setUpTemperatureTable(data, cur, conn):
-    cur.execute("DROP TABLE IF EXISTS Temperature")
     cur.execute("""CREATE TABLE IF NOT EXISTS Temperature(
         date TEXT UNIQUE PRIMARY KEY,
         temperature INTEGER) """)
@@ -96,7 +95,6 @@ def setUpTemperatureTable(data, cur, conn):
         conn.commit()
 
 def setUpPrecipTable(data, cur, conn):
-    cur.execute("DROP TABLE IF EXISTS Precipitation")
     cur.execute("""CREATE TABLE IF NOT EXISTS Precipitation(
         date TEXT UNIQUE PRIMARY KEY,
         precipitation_inches INTEGER) """)
@@ -161,7 +159,7 @@ def crimeVprecip_plot(cur, conn):
     plt.tight_layout()
     plt.show()
 
-def crimesPerDayPlot(cur, conn):
+def crimesPerDayPlot(cur, conn): #group by month
     cur.execute("""SELECT date, SUM(assaults), SUM(homicides)
     FROM Crime
     GROUP BY date
@@ -178,7 +176,7 @@ def crimesPerDayPlot(cur, conn):
     plt.title('Number of Violent Crimes Reported Daily in March 2021')
     plt.show()
 
-def FindAverages(cur, conn):
+def FindAverages(cur, conn): #update this
     cur.execute('SELECT assaults FROM Crime')
     assault_data = cur.fetchall()
     sum_assaults = 0
@@ -206,7 +204,7 @@ def FindAverages(cur, conn):
     return [avg_assaults, avg_homicides, avg_precip, avg_temp]
 
 
-def writeFile(filename, cur, conn):
+def writeFile(filename, cur, conn): #update this
     l = FindAverages(cur, conn)
     f = open(filename, 'w')
     f.write(f"Average Number of Reported Assaults in Washington D.C. During March 2021: {l[0]}")
@@ -221,17 +219,17 @@ def main():
         response = crime_api_call()
         list_of_dic = get_crime_date_and_type(response)
         data = crime_org(list_of_dic)
-        temp_json = weather_api_call()
-        precip_json = rain_api_call()
+        # temp_json = weather_api_call()
+        # precip_json = rain_api_call()
         cur, conn = setUpDatabase('FinalProject.db')
         setUpCrimeTable(data, cur, conn)
-        setUpTemperatureTable(temp_json, cur, conn)
-        setUpPrecipTable(precip_json, cur, conn)
+        # setUpTemperatureTable(temp_json, cur, conn)
+        # setUpPrecipTable(precip_json, cur, conn)
         crimeVtemp_plot(cur, conn)
         crimeVprecip_plot(cur,conn)
-        crimesPerDayPlot(cur, conn)
-        FindAverages(cur, conn)
-        writeFile('FinalProject.txt', cur, conn)
+        # crimesPerDayPlot(cur, conn)
+        # FindAverages(cur, conn)
+        # writeFile('FinalProject.txt', cur, conn)
 
 
 main()
