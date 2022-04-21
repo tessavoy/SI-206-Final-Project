@@ -187,7 +187,7 @@ def FindAverages(cur, conn):
 
 def avgCrimePlot(cur, conn):
     dic = FindAverages(cur, conn)
-    labels = ['March', 'April', 'May', 'July']
+    labels = ['March', 'April', 'May', 'June']
     avg_assaults = []
     avg_homicides = []
     for v in dic.values():
@@ -205,7 +205,7 @@ def avgCrimePlot(cur, conn):
 
 def avgTempPlot(cur, conn):
     dic = FindAverages(cur, conn)
-    labels = ['March', 'April', 'May', 'July']
+    labels = ['March', 'April', 'May', 'June']
     avg_temp = []
     for v in dic.values():
         avg_temp.append(v[0][2])
@@ -219,7 +219,7 @@ def avgTempPlot(cur, conn):
 
 def avgPrecipPlot(cur, conn):
     dic = FindAverages(cur, conn)
-    labels = ['March', 'April', 'May', 'July']
+    labels = ['March', 'April', 'May', 'June']
     avg_precip = []
     for v in dic.values():
         avg_precip.append(v[0][3])
