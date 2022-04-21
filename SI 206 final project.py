@@ -159,22 +159,6 @@ def crimeVprecip_plot(cur, conn):
     plt.tight_layout()
     plt.show()
 
-# def crimesPerDayPlot(cur, conn): #group by month
-#     cur.execute("""SELECT date, SUM(assaults), SUM(homicides)
-#     FROM Crime
-#     GROUP BY date
-#     """)
-#     data = cur.fetchall()
-#     dates = []
-#     num_crimes = []
-#     for i in data:
-#         dates.append(i[0][8:])
-#         num_crimes.append(i[1])
-#     plt.bar(dates, num_crimes, color='purple', width=.3)
-#     plt.xlabel('Date')
-#     plt.ylabel('Number of Violent Crimes Reported')
-#     plt.title('Number of Violent Crimes Reported Daily in March 2021')
-#     plt.show()
 
 def FindAverages(cur, conn):
     cur.execute("""SELECT AVG(assaults), AVG(homicides), AVG(temperature), AVG(precipitation_inches)
@@ -202,7 +186,28 @@ def FindAverages(cur, conn):
     d['April'] = april_avg_data
     d['May'] = may_avg_data
     d['June'] = june_avg_data
+    print(d)
     return d
+
+def avgPlot(cur, conn): #group by month
+    dic = FindAverages(cur, conn)
+    labels = ['March', 'April', 'May', 'July']
+    avg_assaults = []
+    avg_homicides = []
+    avg_temp = []
+    for v in dic.values():
+        avg_assaults.append(v[0][0])
+        avg_homicides.append(v[0][1])
+        avg_temp.append(v[0][2])
+    X_axis = np.arange(len(labels))
+    plt.bar(X_axis - 0.2, avg_assaults, 0.4, label = 'Assaults')
+    plt.bar(X_axis + 0.2, avg_homicides, 0.4, label = 'Homicides')
+    plt.xticks(X_axis, labels)
+    plt.xlabel("Months")
+    plt.ylabel("Average Number of Reported Violent Crimes")
+    plt.title("Monthly Average Number of Reported Violent Crimes in 2021")
+    plt.legend()
+    plt.show()
 
 
 def writeFile(filename, cur, conn):
@@ -242,6 +247,7 @@ def main():
         # crimeVprecip_plot(cur,conn)
         # crimesPerDayPlot(cur, conn)
         FindAverages(cur, conn)
+        avgPlot(cur, conn)
         writeFile('FinalProject.txt', cur, conn)
 
 
