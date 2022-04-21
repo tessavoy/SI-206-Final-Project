@@ -6,8 +6,6 @@ import requests
 from datetime import datetime
 import numpy as np
 
-
-
 def crime_api_call():
     result = requests.get("https://maps2.dcgis.dc.gov/dcgis/rest/services/FEEDS/MPD/MapServer/3/query?where=OFFENSE%20%3D%20'ASSAULT%20W%2FDANGEROUS%20WEAPON'%20OR%20OFFENSE%20%3D%20'HOMICIDE'&outFields=REPORT_DAT,OFFENSE&outSR=4326&f=json")
     response = result.json()
@@ -159,7 +157,6 @@ def crimeVprecip_plot(cur, conn):
     plt.tight_layout()
     plt.show()
 
-
 def FindAverages(cur, conn):
     cur.execute("""SELECT AVG(assaults), AVG(homicides), AVG(temperature), AVG(precipitation_inches)
     FROM Crime JOIN Temperature ON Crime.date = Temperature.date
@@ -186,19 +183,16 @@ def FindAverages(cur, conn):
     d['April'] = april_avg_data
     d['May'] = may_avg_data
     d['June'] = june_avg_data
-    print(d)
     return d
 
-def avgPlot(cur, conn): #group by month
+def avgCrimePlot(cur, conn):
     dic = FindAverages(cur, conn)
     labels = ['March', 'April', 'May', 'July']
     avg_assaults = []
     avg_homicides = []
-    avg_temp = []
     for v in dic.values():
         avg_assaults.append(v[0][0])
         avg_homicides.append(v[0][1])
-        avg_temp.append(v[0][2])
     X_axis = np.arange(len(labels))
     plt.bar(X_axis - 0.2, avg_assaults, 0.4, label = 'Assaults')
     plt.bar(X_axis + 0.2, avg_homicides, 0.4, label = 'Homicides')
@@ -209,6 +203,33 @@ def avgPlot(cur, conn): #group by month
     plt.legend()
     plt.show()
 
+def avgTempPlot(cur, conn):
+    dic = FindAverages(cur, conn)
+    labels = ['March', 'April', 'May', 'July']
+    avg_temp = []
+    for v in dic.values():
+        avg_temp.append(v[0][2])
+    X_axis = np.arange(len(labels))
+    plt.bar(X_axis, avg_temp, 0.4, label = 'Temperature')
+    plt.xticks(X_axis, labels)
+    plt.xlabel("Months")
+    plt.ylabel("Average Monthly Temperature")
+    plt.title("Monthly Average D.C. Temperature in 2021")
+    plt.show()
+
+def avgPrecipPlot(cur, conn):
+    dic = FindAverages(cur, conn)
+    labels = ['March', 'April', 'May', 'July']
+    avg_precip = []
+    for v in dic.values():
+        avg_precip.append(v[0][3])
+    X_axis = np.arange(len(labels))
+    plt.bar(X_axis, avg_precip, 0.4, label = 'Precipitation (inches)')
+    plt.xticks(X_axis, labels)
+    plt.xlabel("Months")
+    plt.ylabel("Average Monthly Precipitation (inches)")
+    plt.title("Monthly Average D.C. Precipitation in 2021")
+    plt.show()
 
 def writeFile(filename, cur, conn):
     d = FindAverages(cur, conn)
@@ -231,8 +252,6 @@ def writeFile(filename, cur, conn):
     f.write(f"Average Temperature in Washington D.C. During June 2021: {d['June'][0][3]}\n")
     f.close()
 
-
-
 def main():
         response = crime_api_call()
         list_of_dic = get_crime_date_and_type(response)
@@ -243,13 +262,13 @@ def main():
         # setUpCrimeTable(data, cur, conn)
         # setUpTemperatureTable(temp_json, cur, conn)
         # setUpPrecipTable(precip_json, cur, conn)
-        # crimeVtemp_plot(cur, conn)
-        # crimeVprecip_plot(cur,conn)
-        # crimesPerDayPlot(cur, conn)
+        crimeVtemp_plot(cur, conn)
+        crimeVprecip_plot(cur,conn)
         FindAverages(cur, conn)
-        avgPlot(cur, conn)
-        writeFile('FinalProject.txt', cur, conn)
-
+        avgCrimePlot(cur, conn)
+        avgTempPlot(cur, conn)
+        avgPrecipPlot(cur, conn)
+        # writeFile('FinalProject.txt', cur, conn)
 
 main()
 
